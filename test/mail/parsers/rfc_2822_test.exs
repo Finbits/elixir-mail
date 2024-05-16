@@ -262,6 +262,37 @@ defmodule Mail.Parsers.RFC2822Test do
     assert attach_part.body == "Hello world!"
   end
 
+  test "parse with binary subject" do
+    message = parse_email("""
+    Return-Path: <xx.xxx@xxx.com>
+      boundary="----=_Part_202_427753620.1715716814007"
+    Date: Tue, 14 May 2024 17:00:14 -0300
+    From: "xxxxx Distribuio S.A." <faturamento.xxxx@xxxxx.com>
+    To: <test-user-1@example.com>, <test-user-2@example.com>,
+      <test-user-3@finbits.in>, <test-user-4@example.com>
+    Message-ID: <553953644.203.1715716814008.JavaMail.jboss@dem-33-65sfs>
+    Subject: =?ISO-8859-1?Q?titulo_do_email=E7os?=
+    MIME-Version: 1.0
+    X-TNEFEvaluated: 1
+
+    ------=_Part_202_427753620.1715716814007
+    Content-Transfer-Encoding: quoted-printable
+    Content-Type: text/html; charset="ISO-8859-1"
+
+    ------=_Part_202_427753620.1715716814007--
+
+    """)
+
+    assert message.headers["to"] == [
+      "test-user-1@example.com",
+      "test-user-2@example.com",
+      "test-user-3@finbits.in",
+      "test-user-4@example.com"
+    ]
+
+    assert message.headers["subject"] == "titulo_do_email"
+  end
+
   test "parses unstructured headers" do
     message =
       parse_email("""

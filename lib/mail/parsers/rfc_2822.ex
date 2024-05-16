@@ -290,6 +290,10 @@ defmodule Mail.Parsers.RFC2822 do
   defp parse_header_value("to", value),
     do: parse_recipient_value(value)
 
+  defp parse_header_value("subject", value) do
+    Enum.join(for <<c::utf8 <- value>>, do: <<c::utf8>>)
+  end
+
   defp parse_header_value("cc", value),
     do: parse_recipient_value(value)
 
